@@ -1,7 +1,8 @@
 FROM curlimages/curl:latest as builder
 
+ARG V2RAY_PLUGIN_VERSION=1.3.2
 WORKDIR /ss
-RUN curl -fL -o v2ray-plugin-linux-amd64.tar.gz https://github.com/shadowsocks/v2ray-plugin/releases/download/v1.3.2/v2ray-plugin-linux-amd64-v1.3.2.tar.gz
+RUN curl -fL -o v2ray-plugin-linux-amd64.tar.gz https://github.com/shadowsocks/v2ray-plugin/releases/download/v${V2RAY_PLUGIN_VERSION}/v2ray-plugin-linux-amd64-v${V2RAY_PLUGIN_VERSION}.tar.gz
 RUN tar xzf v2ray-plugin-linux-amd64.tar.gz
 RUN chmod +x v2ray-plugin_linux_amd64
 
