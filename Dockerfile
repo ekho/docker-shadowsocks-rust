@@ -1,4 +1,4 @@
-FROM curl:latest as builder
+FROM curlimages/curl:latest as builder
 
 RUN set -eux; \
     curl -L https://github.com/shadowsocks/v2ray-plugin/releases/download/v1.3.2/v2ray-plugin-linux-amd64-v1.3.2.tar.gz | tar xz; \
