@@ -1,4 +1,4 @@
-name: Publish Docker image
+name: Build and publish Docker image
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ on:
       - 'main'
       
 jobs:
-  push_to_registry:
+  push_to_docker_hub:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
@@ -29,10 +29,45 @@ jobs:
       
       - name: Log in to Docker Hub
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        uses: docker/login-action@v2.1.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  push_to_github:
+    name: Push Docker image to GitHub
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+      
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/ekho/shadowsocks-rust
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+      
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
