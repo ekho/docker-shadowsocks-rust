@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "docker-build",
+            "name": "build shadowsocks",
+            "file": "Dockerfile",
+            "buildOptions": "-t ghcr.io/ekho/shadowsocks-rust --progress=plain",
+        },
+
+    ]
+}

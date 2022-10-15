@@ -8,5 +8,7 @@ RUN tar xzf v2ray-plugin-linux-amd64.tar.gz
 RUN chmod +x v2ray-plugin_linux_amd64
 
 FROM ghcr.io/shadowsocks/ssserver-rust:latest
-
 COPY --from=builder /ss/v2ray-plugin_linux_amd64 /usr/local/bin/v2ray-plugin
+RUN apk add --no-cache tini
+ENTRYPOINT [ "/sbin/tini", "/usr/local/bin/docker-entrypoint.sh" ]
+CMD [ "ssserver", "--log-without-time", "-a", "nobody", "-c", "/etc/shadowsocks-rust/config.json" ]
